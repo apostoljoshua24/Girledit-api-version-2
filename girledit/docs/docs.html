@@ -1,0 +1,375 @@
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>API Documentation</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+        background-image: linear-gradient(
+          45deg,
+          #243aff 0%,
+          #4687f0 46%,
+          #5800d4 100%,
+          #800080 0%,
+          #e90207 46%,
+          #ff8c00 100%
+        );
+      }
+
+      .container {
+        max-width: 100%;
+        margin: 0 auto;
+      }
+
+      h1 {
+        color: #333;
+        text-align: center;
+      }
+
+      .endpoint {
+        margin-bottom: 20px;
+        padding: 15px;
+        border-radius: 8px;
+        background-color: #f8f8f8;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        transition: background-color 0.3s ease;
+      }
+
+      .endpoint:hover {
+        background-color: #e0e0e0;
+      }
+
+      .endpoint h2 {
+        margin-top: 0;
+      }
+
+      .description {
+        margin-bottom: 10px;
+        color: blueviolet;
+      }
+
+      .code {
+        padding: 10px;
+        border-radius: 5px;
+        overflow-x: auto;
+        background-color: #ccc;
+      }
+
+      .code pre {
+        margin: 0;
+      }
+
+      .copy-button {
+        background-color: blue;
+        color: #fff;
+        border: none;
+        border-radius: 3px;
+        padding: 5px 10px;
+        cursor: pointer;
+      }
+
+      .glass {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+      }
+
+      .glass li {
+        position: absolute;
+        display: block;
+        list-style: none;
+        width: 20px;
+        height: 20px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        animation: spin 5s linear infinite;
+        bottom: -150px;
+      }
+
+      .glass li:nth-child(1) {
+        left: 35%;
+        width: 150px;
+        height: 150px;
+        animation-delay: 0s;
+      }
+
+      .glass li:nth-child(2) {
+        left: 10%;
+        width: 20px;
+        height: 20px;
+        animation-delay: 2s;
+        animation-duration: 12s;
+      }
+
+      .glass li:nth-child(3) {
+        left: 70%;
+        width: 20px;
+        height: 20px;
+        animation-delay: 4s;
+      }
+
+      .glass li:nth-child(4) {
+        left: 40%;
+        width: 60px;
+        height: 60px;
+        animation-delay: 0s;
+        animation-duration: 18s;
+      }
+
+      .glass li:nth-child(5) {
+        left: 65%;
+        width: 20px;
+        height: 20px;
+        animation-delay: 0s;
+      }
+
+      .glass li:nth-child(6) {
+        left: 75%;
+        width: 110px;
+        height: 110px;
+        animation-delay: 3s;
+      }
+
+      .glass li:nth-child(7) {
+        left: 35%;
+        width: 150px;
+        height: 150px;
+        animation-delay: 7s;
+      }
+
+      .glass li:nth-child(8) {
+        left: 50%;
+        width: 25px;
+        height: 25px;
+        animation-delay: 15s;
+        animation-duration: 45s;
+      }
+
+      .glass li:nth-child(9) {
+        left: 20%;
+        width: 15px;
+        height: 15px;
+        animation-delay: 2s;
+        animation-duration: 35s;
+      }
+
+      .glass li:nth-child(10) {
+        left: 85%;
+        width: 150px;
+        height: 150px;
+        animation-delay: 0s;
+        animation-duration: 11s;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: translateY(0) rotate(0deg);
+          opacity: 1;
+          border-radius: 0;
+        }
+
+        100% {
+          transform: translateY(-1000px) rotate(720deg);
+          opacity: 0;
+          border-radius: 50%;
+        }
+      }
+    </style>
+  </head>
+
+  <body class="bg">
+    <div class="glass">
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+    </div>
+
+    <div class="container">
+      <h1>API Documentation</h1>
+
+      <div class="endpoint">
+        <h2>Node.js Code</h2>
+        <div class="description">
+          Generate Random girl edit by tikvm node.js
+        </div>
+        <div class="code">
+          <button class="copy-button" onclick="copyToClipboard('code1')">
+            Copy
+          </button>
+          <!-- Added copy button -->
+          <pre id="code1">
+        <code>
+const axios = require("axios");
+const response = await axios.post(`https://girledit.replit.app/api/request/f`, { credits: "Eugene Aguilar"});
+console.log(data);
+        </code>
+      </pre>
+        </div>
+      </div>
+
+      <div class="endpoint">
+        <h2>Mirai Commands code</h2>
+        <div class="description">
+          Generate Random girl edit by tikvm mirai.js.
+        </div>
+        <div class="code">
+          <button class="copy-button" onclick="copyToClipboard('code2')">
+            Copy
+          </button>
+          <!-- Added copy button -->
+          <pre id="code2">
+        <code>
+const axios = require("axios");
+const path = require("path");
+const fs = require("fs");
+
+module.exports.config = {
+    name: "girledit",
+    version: "1.0.0",
+    credits: "Eugene Aguilar",
+    description: "Generate random TikTok girl edit videos",
+    hasPermssion: 0,
+    commandCategory: "other",
+    usages: "[girledit]",
+    cooldowns: 5,
+    dependencies: [],
+    usePrefix: true,
+};
+
+module.exports.run = async function ({ api, event }) {
+    try {
+ api.sendMessage(`video is sending please wait...`, event.threadID, event.messageID);
+
+        const response = await axios.post(`https://girledit.replit.app/api/request/f`, { credits: "Eugene Aguilar"});
+        const videoUrl = response.data.url;
+        const username = response.data.username;
+        const nickname = response.data.nickname;
+
+
+        const videoPath = path.resolve(__dirname, 'girledit_video.mp4');
+        const writer = fs.createWriteStream(videoPath);
+        const responseStream = await axios({
+            url: videoUrl,
+            method: 'GET',
+            responseType: 'stream'
+        });
+
+        responseStream.data.pipe(writer);
+
+        writer.on('finish', () => {
+            api.sendMessage({
+                body: `Username: ${username}\nNickname: ${nickname}`,
+                attachment: fs.createReadStream(videoPath)
+            }, event.threadID, () => fs.unlinkSync(videoPath), event.messageID);
+        });
+    } catch (error) {
+  api.sendMessage(`error fetching girl edit api!!\n${error}`, event.threadID, event.messageID);
+        console.error('Error:', error.message);
+    }
+};
+        </code>
+      </pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="endpoint">
+      <h2>Goatbot Commands code</h2>
+      <div class="description">
+        Generate Random girl edit by tikvm goatbot.js.
+      </div>
+      <div class="code">
+        <button class="copy-button" onclick="copyToClipboard('code3')">
+          Copy
+        </button>
+        <!-- Added copy button -->
+        <pre id="code3">
+        <code>
+const axios = require("axios");
+const path = require("path");
+const fs = require("fs");
+
+module.exports = {
+    config: {
+        name: "girledit",
+        aliases: ["girl"],
+        version: "1.0.0",
+        role: 0,
+        author: "Eugene Aguilar",
+        shortDescription: {
+            en: "Generate random TikTok girl edit videos",
+            longDescription: {
+                en: "This command generates random Tiktok girl edit video.",
+                category: "other",
+                guide: {
+                    en: "To use this command, simply type {p}girledit",
+                },
+                countDowns: 5,
+            },
+        },
+    },
+    onStart: async function ({ api, event, message }) {
+        try {
+            message.reply(`Video is sending, please wait...`);
+
+            const response = await axios.post(`https://girledit.replit.app/api/request/f`, {credits: "Eugene Aguilar"});
+            const videoUrl = response.data.url;
+            const username = response.data.username;
+            const nickname = response.data.nickname;
+
+            const videoPath = path.resolve(__dirname, 'girledit_video.mp4');
+            const writer = fs.createWriteStream(videoPath);
+            const responseStream = await axios({
+                url: videoUrl,
+                method: 'GET',
+                responseType: 'stream'
+            });
+
+            responseStream.data.pipe(writer);
+
+            writer.on('finish', () => {
+                message.reply({
+                    body: `Username: ${username}\nNickname: ${nickname}`,
+                    attachment: fs.createReadStream(videoPath)
+                }, () => fs.unlinkSync(videoPath));
+            });
+        } catch (error) {
+            message.reply(`Error fetching girl edit API!!\n${error}`);
+            console.error('Error:', error.message);
+        }
+    }
+};
+
+        </code>
+      </pre>
+      </div>
+    </div>
+
+    <script>
+      function copyToClipboard(elementId) {
+        var text = document.getElementById(elementId).innerText;
+        var temp = document.createElement("textarea");
+        document.body.appendChild(temp);
+        temp.value = text;
+        temp.select();
+        document.execCommand("copy");
+        document.body.removeChild(temp);
+        alert("Code copied to clipboard");
+      }
+    </script>
+  </body>
+</html>
