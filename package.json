@@ -1,23 +1,26 @@
 {
   "name": "girledit-api-v2",
   "version": "2.0.0",
-  "description": "Girledit Video API - Add and manage TikTok video links",
+  "description": "Girledit Video API - Add and manage TikTok video links with Neon PostgreSQL",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": ["api", "video", "tiktok", "girledit"],
+  "keywords": ["api", "video", "tiktok", "girledit", "neon", "postgresql"],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@types/node": "^18.0.6",
+    "@neondatabase/serverless": "^0.9.0",
     "axios": "^1.6.8",
     "cors": "^2.8.5",
     "express": "^4.19.2"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
+  },
+  "engines": {
+    "node": "18.x"
   }
 }
