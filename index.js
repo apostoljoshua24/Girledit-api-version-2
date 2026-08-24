@@ -1,27 +1,34 @@
 const express = require("express");
 const cors = require("cors");
-const { neon } = require("@neondatabase/serverless");
 
 const app = express();
-
-// Database Configuration - Neon Serverless
-const DATABASE_URL = process.env.DATABASE_URL || 'postgresql://neondb_owner:npg_XhHsS97CiPBz@ep-odd-wave-ax22muhl-pooler.c-4.us-east-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require';
-const sql = neon(DATABASE_URL);
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Flag to track if DB is initialized
-let dbInitialized = false;
+let sqlInstance = null;
 
-// ============ INITIALIZE DATABASE (One-time) ============
-const initializeDatabase = async () => {
-  if (dbInitialized) return;
-  
+// Lazy load Neon on first use to avoid initialization errors
+const getSql = async () => {
+  if (!sqlInstance) {
+    try {
+      const { neon } = require("@neondatabase/serverless");
+      const DATABASE_URL = process.env.DATABASE_URL || 'postgresql://neondb_owner:npg_XhHsS97CiPBz@ep-odd-wave-ax22muhl-pooler.c-4.us-east-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require';
+      sqlInstance = neon(DATABASE_URL);
+    } catch (error) {
+      console.error("❌ Failed to initialize database:", error.message);
+      throw error;
+    }
+  }
+  return sqlInstance;
+};
+
+// Initialize database table
+const ensureTable = async () => {
   try {
-    // Create videos table if it doesn't exist
+    const sql = await getSql();
     await sql`
       CREATE TABLE IF NOT EXISTS videos (
         id SERIAL PRIMARY KEY,
@@ -37,20 +44,19 @@ const initializeDatabase = async () => {
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `;
-    dbInitialized = true;
-    console.log("✅ Database table initialized");
+    console.log("✅ Database table ready");
   } catch (error) {
-    console.error("⚠️ Database initialization error:", error.message);
-    // Don't throw, allow app to continue
+    console.error("⚠️ Table initialization warning:", error.message);
   }
 };
 
-// Initialize on startup
-initializeDatabase().catch(err => console.error("Init error:", err));
-
 // ============ HEALTH CHECK ============
 app.get("/health", (req, res) => {
-  res.json({ status: "ok", message: "Server is running" });
+  res.json({ 
+    status: "ok", 
+    message: "Server is running",
+    timestamp: new Date().toISOString()
+  });
 });
 
 // ============ HOME PAGE ============
@@ -78,12 +84,12 @@ app.get("/", (req, res) => {
       <body>
         <div class="container">
           <h1>🎬 Girledit API v2</h1>
-          <p class="status">✅ Server Running | 🗄️ PostgreSQL Connected</p>
+          <p class="status">✅ Server Running | 🗄️ PostgreSQL Ready</p>
           
           <div class="section-title">📍 Available Endpoints:</div>
           <ul class="endpoints">
-            <li><strong>GET /</strong> - Home page</li>
             <li><strong>GET /health</strong> - Health check</li>
+            <li><strong>GET /</strong> - This page</li>
             <li><strong>GET /api/videos</strong> - Get all videos</li>
             <li><strong>GET /api/videos/:id</strong> - Get single video</li>
             <li><strong>POST /add</strong> - Add new video</li>
@@ -109,6 +115,7 @@ app.get("/", (req, res) => {
 // ============ GET ALL VIDEOS ============
 app.get("/api/videos", async (req, res) => {
   try {
+    const sql = await getSql();
     const videos = await sql`SELECT * FROM videos ORDER BY created_at DESC`;
     res.json({
       success: true,
@@ -119,8 +126,7 @@ app.get("/api/videos", async (req, res) => {
     console.error("Error fetching videos:", error.message);
     res.status(500).json({
       success: false,
-      error: "Error fetching videos",
-      details: error.message
+      error: "Error fetching videos"
     });
   }
 });
@@ -137,6 +143,7 @@ app.get("/api/videos/:id", async (req, res) => {
       });
     }
 
+    const sql = await getSql();
     const video = await sql`SELECT * FROM videos WHERE id = ${parseInt(id)}`;
 
     if (video.length === 0) {
@@ -154,8 +161,7 @@ app.get("/api/videos/:id", async (req, res) => {
     console.error("Error fetching video:", error.message);
     res.status(500).json({
       success: false,
-      error: "Error fetching video",
-      details: error.message
+      error: "Error fetching video"
     });
   }
 });
@@ -181,7 +187,7 @@ app.post("/add", async (req, res) => {
       });
     }
 
-    // Insert into database
+    const sql = await getSql();
     const result = await sql`
       INSERT INTO videos (title, description, url, thumbnail, username, nickname)
       VALUES (${title}, ${description || null}, ${url}, ${thumbnail || 'https://via.placeholder.com/400x300?text=Video'}, ${username || null}, ${nickname || null})
@@ -197,7 +203,7 @@ app.post("/add", async (req, res) => {
   } catch (error) {
     console.error("Error adding video:", error.message);
     
-    if (error.message.includes("duplicate")) {
+    if (error.message.includes("duplicate") || error.message.includes("unique")) {
       return res.status(400).json({
         success: false,
         message: "This video URL already exists"
@@ -206,8 +212,7 @@ app.post("/add", async (req, res) => {
 
     res.status(500).json({
       success: false,
-      error: "Error adding video",
-      details: error.message
+      error: "Error adding video"
     });
   }
 });
@@ -241,7 +246,7 @@ app.post("/api/add/girl", async (req, res) => {
       });
     }
 
-    // Insert into database
+    const sql = await getSql();
     const result = await sql`
       INSERT INTO videos (title, description, url, thumbnail, username, nickname)
       VALUES (${title || 'Video'}, ${description || null}, ${url}, ${thumbnail || 'https://via.placeholder.com/400x300?text=Video'}, ${username || null}, ${nickname || null})
@@ -257,7 +262,7 @@ app.post("/api/add/girl", async (req, res) => {
   } catch (error) {
     console.error("Error adding video:", error.message);
     
-    if (error.message.includes("duplicate")) {
+    if (error.message.includes("duplicate") || error.message.includes("unique")) {
       return res.status(400).json({
         success: false,
         message: "This video URL already exists"
@@ -266,8 +271,7 @@ app.post("/api/add/girl", async (req, res) => {
 
     res.status(500).json({
       success: false,
-      error: "Error adding video",
-      details: error.message
+      error: "Error adding video"
     });
   }
 });
@@ -275,6 +279,7 @@ app.post("/api/add/girl", async (req, res) => {
 // ============ GET RANDOM VIDEO ============
 app.post("/api/request/f", async (req, res) => {
   try {
+    const sql = await getSql();
     const videos = await sql`SELECT * FROM videos ORDER BY RANDOM() LIMIT 1`;
 
     if (videos.length === 0) {
@@ -286,8 +291,10 @@ app.post("/api/request/f", async (req, res) => {
 
     const video = videos[0];
 
-    // Update views (async, don't wait)
-    sql`UPDATE videos SET views = views + 1 WHERE id = ${video.id}`.catch(err => console.error("View update error:", err));
+    // Update views (non-blocking)
+    sql`UPDATE videos SET views = views + 1 WHERE id = ${video.id}`.catch(err => {
+      console.error("View update error:", err.message);
+    });
 
     res.json({
       success: true,
@@ -298,8 +305,7 @@ app.post("/api/request/f", async (req, res) => {
     console.error("Error fetching random video:", error.message);
     res.status(500).json({
       success: false,
-      error: "Error fetching video",
-      details: error.message
+      error: "Error fetching video"
     });
   }
 });
@@ -318,6 +324,7 @@ app.put("/api/videos/:id", async (req, res) => {
     }
 
     const videoId = parseInt(id);
+    const sql = await getSql();
 
     // Get current video
     const currentVideo = await sql`SELECT * FROM videos WHERE id = ${videoId}`;
@@ -351,8 +358,7 @@ app.put("/api/videos/:id", async (req, res) => {
     console.error("Error updating video:", error.message);
     res.status(500).json({
       success: false,
-      error: "Error updating video",
-      details: error.message
+      error: "Error updating video"
     });
   }
 });
@@ -369,6 +375,7 @@ app.delete("/api/videos/:id", async (req, res) => {
       });
     }
 
+    const sql = await getSql();
     const result = await sql`DELETE FROM videos WHERE id = ${parseInt(id)} RETURNING *`;
 
     if (result.length === 0) {
@@ -388,8 +395,7 @@ app.delete("/api/videos/:id", async (req, res) => {
     console.error("Error deleting video:", error.message);
     res.status(500).json({
       success: false,
-      error: "Error deleting video",
-      details: error.message
+      error: "Error deleting video"
     });
   }
 });
@@ -407,8 +413,7 @@ app.use((err, req, res, next) => {
   console.error("Server error:", err);
   res.status(500).json({
     success: false,
-    error: "Internal server error",
-    message: err.message
+    error: "Internal server error"
   });
 });
 
@@ -418,9 +423,16 @@ module.exports = app;
 // ============ LOCAL SERVER (for development) ============
 if (require.main === module) {
   const port = process.env.PORT || 3000;
-  app.listen(port, () => {
-    console.log(`✅ Girledit API v2 running on port ${port}`);
-    console.log(`📍 http://localhost:${port}`);
-    console.log(`🗄️ Database: Neon PostgreSQL`);
+  
+  // Initialize database on startup
+  ensureTable().then(() => {
+    app.listen(port, () => {
+      console.log(`✅ Girledit API v2 running on port ${port}`);
+      console.log(`📍 http://localhost:${port}`);
+      console.log(`🗄️ Database: Neon PostgreSQL`);
+    });
+  }).catch(err => {
+    console.error("Failed to start:", err);
+    process.exit(1);
   });
 }
