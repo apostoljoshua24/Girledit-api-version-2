@@ -1,17 +1,23 @@
 {
-  "name": "nodejs",
-  "version": "1.0.0",
-  "description": "",
+  "name": "girledit-api-v2",
+  "version": "2.0.0",
+  "description": "Girledit Video API - Add and manage TikTok video links",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
+  "keywords": ["api", "video", "tiktok", "girledit"],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@types/node": "^18.0.6",
     "axios": "^1.6.8",
+    "cors": "^2.8.5",
     "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
   }
 }
